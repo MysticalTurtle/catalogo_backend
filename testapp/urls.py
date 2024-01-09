@@ -23,6 +23,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("",include('ecomerce.urls')),
     # path('api/api/', TheAutentication.as_view(), name='api_register'),
-    path('api/token/', obtain_auth_token, name='api-token'),    
+    # path('api/token/', obtain_auth_token, name='api-token'),
+    path('api/token/', LoginCustom.as_view(), name='api-token'),
     # path('api/register/', RegisterUserView.as_view(), name='api-register'),      
 ]

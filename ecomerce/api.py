@@ -42,18 +42,6 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer  
 
 
-# class RegisterUserView(generics.CreateAPIView):
-#     serializer_class = UserSerializer
-#     permission_classes = [AllowAny]
-
-class Login(ObtainAuthToken):
-    def post(self,request,*args,**kwargs):
-        login_serializer = self.serializer_class(data = request.data,context = {'request':request})
-        if(login_serializer.is_valid()):
-            print('paso')
-        return Response({'mensaje':'Hola repsosne'},status = status.HTTP_200_OK)
-
-
 class TheAutentication(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
@@ -64,3 +52,13 @@ class TheAutentication(APIView):
             'auth': str(request.auth),
         }
         return Response(content)
+
+
+class LoginCustom(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        user = token.user
+        user_data = UserSerializer(user, context={'request': request}).data
+        response.data['user'] = user_data
+        return response
